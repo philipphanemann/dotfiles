@@ -2,24 +2,52 @@ set nocompatible              " required
 set nomodeline		      " security issue for v < 8.1.1365
 filetype off                  " required
 
-" Show line numbers.
-set number
+"---------------------
+" Basic editing config
+"---------------------
+" smart case-sensitive search
+set ignorecase
+set smartcase
+set lazyredraw " skip redrawing screen in some cases
+set number " Show line numbers.
+set relativenumber " relative line numbering, except selected line
+set laststatus=2 " Always show the status line at the bottom, even if you only have one window open.
+set encoding=utf-8
+set nu " number lines
+set noswapfile
 
-" This enables relative line numbering mode. With both number and
-" relativenumber enabled, the current line shows the true line number, while
-" all other lines (above and below) are numbered relative to the current line.
-" This is useful because you can tell, at a glance, what count is needed to
-" jump up or down to a particular line, by {count}k to go up or {count}j to go
-" down.
-set relativenumber
+"copying to clipboard
+vnoremap <C-c> "+y
+map <C-P> "+p
 
-" Always show the status line at the bottom, even if you only have one window open.
-set laststatus=2
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+
+" Enable folding with the spacebar
+nnoremap <space> za
+
+
+
+"--------------------
+" Misc configurations
+"--------------------
+"
+colors zenburn
+" open new split panes to right and bottom
+set splitbelow
+set splitright
+
+"window movements
+nnoremap <C-j> <C-W><C-J>
+nnoremap <C-k> <C-W><C-K>
+nnoremap <C-h> <C-W><C-H>
+nnoremap <C-l> <C-W><C-L>
+
 
 let mapleader = ","
 
+set rtp+=~/.vim/bundle/Vundle.vim " set the runtime path to include Vundle and initialize
 call vundle#begin()
 
 " alternatively, pass a path where Vundle should install plugins
@@ -60,6 +88,34 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 call plug#end()            " required
 
+"---------------------
+" Plugin configuration
+"---------------------
+
+" NERDTree
+" autocmd vimenter * NERDTree " open when vim starts up
+nnoremap <leader>t :NERDTreeToggle<CR>
+
+
+" YouCompleteMe
+let g:ycm_autoclose_preview_window_after_completion=1
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+"file search using fzf excludes hidden
+nnoremap <C-p> :GFiles<CR>
+
+"text search using rg
+nnoremap <C-g> :Rg<CR>
+
+" Source Vim configuration file and install Plug plugins
+nnoremap <silent><leader>1 :source ~/.vimrc \| :PlugInstall<CR>
+
+
+"---------------------
+" Python settings
+"---------------------
+"
+"
 " Enable PEP8 indendation
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |
@@ -70,23 +126,17 @@ au BufNewFile,BufRead *.py
     \ set autoindent |
     \ set fileformat=unix
 
-set ignorecase
-set splitbelow
-set splitright
 
-"split navigations
-    nnoremap <C-J> <C-W><C-J>
-    nnoremap <C-K> <C-W><C-K>
-    nnoremap <C-H> <C-W><C-H>
-    nnoremap <C-L> <C-W><C-L>
+" python syntax highlighting
+let g:python_highlight_all = 1
+
+let python_highlight_all=1
+syntax on
+
+" insert pdb
+imap <C-n> import pdb; pdb.set_trace()<Esc>
 
 
-" Enable folding
-    set foldmethod=indent
-    set foldlevel=99
-
-" Enable folding with the spacebar
-    nnoremap <space> za
 
 " show first line of doc string when folding
 let g:SimpylFold_docstring_preview=1
@@ -94,28 +144,6 @@ let g:SimpylFold_docstring_preview=1
 "no extraneous whitespace
 "au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
-" python syntax highlighting
-let g:python_highlight_all = 1
-
-set encoding=utf-8
-
-" some options for auto-completion
-let g:ycm_autoclose_preview_window_after_completion=1
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-"pretty looking code
-let python_highlight_all=1
-syntax on
-
-colors zenburn
-
-set nu
-set noswapfile
-
-
-"copying to clipboard
-vnoremap <C-c> "+y
-map <C-P> "+p
 
 "JSON formatiing
 map <leader>jt  <Esc>:%!json_xs -f json -t json-pretty<CR>
@@ -129,23 +157,6 @@ nnoremap <F8> <:%s/\s\+$//e<cr>
 "remove trailing white space at write operation
 autocmd BufWritePre * %s/\s\+$//e
 
-" insert pdb
-imap <C-n> import pdb; pdb.set_trace()<Esc>
-
 " tag completion for html
 :iabbrev </ </<C-X><C-O>
 
-"NERDTree
-" open when vim starts up
-" autocmd vimenter * NERDTree
-map <leader>t :NERDTreeToggle<CR>
-
-"
-" Source Vim configuration file and install plugins
-nnoremap <silent><leader>1 :source ~/.vimrc \| :PlugInstall<CR>
-
-"file search using fzf excludes hidden
-nnoremap <C-p> :GFiles<CR>
-
-"text search using rg
-nnoremap <C-g> :Rg<CR>
