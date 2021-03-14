@@ -68,6 +68,7 @@ Plugin 'JamshedVesuna/vim-markdown-preview'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'chrisbra/csv.vim'
+Plugin 'airblade/vim-gitgutter'
 "Plugin 'https://github.com/vim-scripts/XPath-Search.git'
 
 "Plugin 'integralist/vim-mypy'
