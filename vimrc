@@ -112,6 +112,9 @@ nnoremap <C-g> :Rg<CR>
 " Source Vim configuration file and install Plug plugins
 nnoremap <silent><leader>1 :source ~/.vimrc \| :PlugInstall<CR>
 
+" ALE
+let b:ale_fixers = ['black']
+
 
 "---------------------
 " Python settings
