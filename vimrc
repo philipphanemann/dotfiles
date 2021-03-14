@@ -86,6 +86,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'w0rp/ale'
 call plug#end()            " required
 
 "---------------------
