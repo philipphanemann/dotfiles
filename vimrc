@@ -116,6 +116,9 @@ nnoremap <silent><leader>1 :source ~/.vimrc \| :PlugInstall<CR>
 let b:ale_fixers = ['black']
 
 
+"markdown preview
+let vim_markdown_preview_github=1
+
 "---------------------
 " Python settings
 "---------------------
