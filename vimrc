@@ -27,6 +27,9 @@ set foldlevel=99
 " Enable folding with the spacebar
 nnoremap <space> za
 
+" resolve issue with [>4;m[>4;2m characters
+let &t_TI = ""
+let &t_TE = ""
 
 
 "--------------------
