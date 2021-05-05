@@ -93,6 +93,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'w0rp/ale'
 Plug 'dhruvasagar/vim-table-mode'
+"Plug 'pprovost/vim-ps1'
 call plug#end()            " required
 
 "---------------------
