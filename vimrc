@@ -87,10 +87,12 @@ filetype plugin on
 
 "VimPlug
 call plug#begin('~/.vim/plugged')
+Plug 'fatih/vim-go', { 'tag': '*', 'do': ':GoUpdateBinaries' }
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'w0rp/ale'
+Plug 'dhruvasagar/vim-table-mode'
 call plug#end()            " required
 
 "---------------------
@@ -121,6 +123,24 @@ let b:ale_fixers = ['black']
 
 "markdown preview
 let vim_markdown_preview_github=1
+
+
+" vim-table-mode
+function! s:isAtStartOfLine(mapping)
+  let text_before_cursor = getline('.')[0 : col('.')-1]
+  let mapping_pattern = '\V' . escape(a:mapping, '\')
+  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+endfunction
+
+inoreabbrev <expr> <bar><bar>
+          \ <SID>isAtStartOfLine('\|\|') ?
+          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+inoreabbrev <expr> __
+              \ <SID>isAtStartOfLine('__') ?
+              \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+
+
 
 "---------------------
 " Python settings
