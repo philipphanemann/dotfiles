@@ -93,7 +93,8 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'w0rp/ale'
 Plug 'dhruvasagar/vim-table-mode'
-"Plug 'pprovost/vim-ps1'
+Plug 'pprovost/vim-ps1'
+Plug 'vim-test/vim-test'
 call plug#end()            " required
 
 "---------------------
@@ -140,6 +141,15 @@ inoreabbrev <expr> <bar><bar>
 inoreabbrev <expr> __
               \ <SID>isAtStartOfLine('__') ?
               \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+
+
+" vim-test mappings
+" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
 
 
 
