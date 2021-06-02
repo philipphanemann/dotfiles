@@ -152,6 +152,12 @@ nmap <silent> t<C-l> :TestLast<CR>
 nmap <silent> t<C-g> :TestVisit<CR>
 
 
+"---------------------
+"vim-go settings
+"---------------------
+autocmd FileType go nnoremap <buffer> <F5> :GoRun<CR>
+
+
 
 "---------------------
 " Python settings
