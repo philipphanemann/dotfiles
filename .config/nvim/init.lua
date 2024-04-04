@@ -45,6 +45,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- display relative numbers
+vim.wo.number = true
 vim.wo.relativenumber = true
 
 -- Set highlight on search
@@ -98,6 +99,7 @@ vim.opt.rtp:prepend(lazypath)
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
+  'github/copilot.vim',
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -316,9 +318,6 @@ require('lazy').setup({
         version = '^1.0.0',
     },
     },
-    config = function()
-    require('telescope').load_extension('live_grep_args')
-    end
   },
 
   {
@@ -444,7 +443,7 @@ require('telescope').setup {
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
-
+pcall(require('telescope').load_extension('live_grep_args'))
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path
 local function find_git_root()
@@ -691,13 +690,27 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
   -- TODO: somehow it does not fetch the .flake8 file
-  pylsp = {},
+  pylsp = {
+    pylsp = {
+      configurationSources = { 'flake8' },
+      plugins = {
+        pylsp_mypy = {
+          enabled = true,
+          report_progress=true,
+          live_mode=false,
+        },
+        pycodestyle = { enabled = false },
+        pyflakes = { enabled = false },
+        flake8 = { enabled = true },
+      },
+    },
+	},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
