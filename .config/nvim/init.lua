@@ -45,7 +45,6 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- display relative numbers
-vim.wo.number = true
 vim.wo.relativenumber = true
 
 -- Set highlight on search
@@ -99,6 +98,7 @@ vim.opt.rtp:prepend(lazypath)
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
+  -- Copilot
   'github/copilot.vim',
 
   -- Git related plugins
@@ -138,6 +138,7 @@ require('lazy').setup({
     }
 },
 
+
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -162,7 +163,7 @@ require('lazy').setup({
       'hrsh7th/cmp-path',
 
       -- Adds a number of user-friendly snippets
-      'rafamadriz/friendly-snippets',
+      -- 'rafamadriz/friendly-snippets',
     },
   },
 
@@ -317,8 +318,7 @@ require('lazy').setup({
         -- For major updates, this must be adjusted manually.
         version = '^1.0.0',
     },
-    },
-  },
+    }  },
 
   {
     -- Highlight, edit, and navigate code
@@ -328,6 +328,12 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
+  {
+    'fei6409/log-highlight.nvim',
+    config = function()
+        require('log-highlight').setup {}
+    end,
+},
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -444,6 +450,7 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension('live_grep_args'))
+
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path
 local function find_git_root()
@@ -690,27 +697,30 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  clangd = {},
+  -- clangd = {},
   -- gopls = {},
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
   -- TODO: somehow it does not fetch the .flake8 file
+  -- it is important to have pylsp, pylsp !!! twice
   pylsp = {
     pylsp = {
       configurationSources = { 'flake8' },
       plugins = {
         pylsp_mypy = {
           enabled = true,
-          report_progress=true,
-          live_mode=false,
+          report_progress = true,
+          live_mode= false,
         },
-        pycodestyle = { enabled = false },
-        pyflakes = { enabled = false },
-        flake8 = { enabled = true },
-      },
+
+        flake8 = {
+          enabled = true,
+          -- config = "~/.config/flake8",
+        },
+      }
     },
-	},
+  },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -804,7 +814,18 @@ cmp.setup {
 --
 -- python convenience
 vim.api.nvim_set_keymap('i', '<C-b>', 'import pdb; pdb.set_trace()<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-p>', 'import pdbp; pdbp.set_trace()<Esc>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>pb', ':! black %<CR>', { desc = 'run black on current file',  noremap = true, silent = true  })
 vim.api.nvim_set_keymap('n', '<leader>pt', ':! pytest %<CR>', { desc = 'run pytest on current file',  noremap = true, silent = true  })
 
+
+
+-- Format JSON with jq
+-- Normal mode
+vim.keymap.set("n", "<Leader>fj", "<Cmd>%!jq<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<Leader>fcj", "<Cmd>%!jq --compact-output<CR>", { noremap = true, silent = true })
+
+-- Visual selection
+vim.keymap.set("v", "<Leader>fj", ":'<,'>!jq<CR>", { noremap = true, silent = true })
+vim.keymap.set("v", "<Leader>fcj", ":'<,'>!jq --compact-output<CR>", { noremap = true, silent = true })
 
