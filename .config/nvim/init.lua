@@ -329,6 +329,20 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
   {
+  "folke/flash.nvim",
+  event = "VeryLazy",
+  ---@type Flash.Config
+  opts = {},
+  -- stylua: ignore
+  keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
+  },
+  {
     'fei6409/log-highlight.nvim',
     config = function()
         require('log-highlight').setup {}
@@ -405,6 +419,13 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+--
+vim.keymap.set('n', '<space><space>x', '<cmd>source %<CR>', { desc = 'source current file' })
+
+vim.keymap.set('n', '<M-j>', '<cmd>cnext<CR>', { desc = 'next quickfix item' })  -- alt + j
+vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'prev quickfix item' })  -- alt + k
+
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -828,4 +849,73 @@ vim.keymap.set("n", "<Leader>fcj", "<Cmd>%!jq --compact-output<CR>", { noremap =
 -- Visual selection
 vim.keymap.set("v", "<Leader>fj", ":'<,'>!jq<CR>", { noremap = true, silent = true })
 vim.keymap.set("v", "<Leader>fcj", ":'<,'>!jq --compact-output<CR>", { noremap = true, silent = true })
+
+
+-- Copilot keybindings
+vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  expr = true,
+  replace_keycodes = false
+})
+vim.g.copilot_no_tab_map = true
+
+
+
+-- Run test under cursor
+local ts_utils = require'nvim-treesitter.ts_utils'
+
+--- Get the text of a Tree-sitter node.
+-- @param node TSNode The Tree-sitter node.
+-- @param bufnr number The buffer number.
+-- @return string|nil The text of the node, or nil if the node is nil.
+local function get_node_text(node, bufnr)
+  if node then
+    return vim.treesitter.get_node_text(node, bufnr)
+  end
+  return nil
+end
+
+local function get_function_name(node, bufnr)
+  if node:type() == 'function_definition' then
+    return get_node_text(node:child(1), bufnr)
+  end
+  return nil
+end
+
+local function get_class_name(node, bufnr)
+  while node do
+    if node:type() == 'class_definition' then
+      return get_node_text(node:child(1), bufnr)
+    end
+    node = node:parent()
+  end
+  return nil
+end
+
+function RunTestUnderCursor()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local file_path = vim.api.nvim_buf_get_name(bufnr)
+
+  local cursor_row, _ = unpack(vim.api.nvim_win_get_cursor(0))
+  cursor_row = cursor_row - 1
+
+  local node = ts_utils.get_node_at_cursor()
+  while node do
+    local function_name = get_function_name(node, bufnr)
+    if function_name then
+      local class_name = get_class_name(node:parent(), bufnr)
+      local cmd
+      if class_name then
+        cmd = string.format("!pytest %s::%s::%s", file_path, class_name, function_name)
+      else
+        cmd = string.format("!pytest %s::%s", file_path, function_name)
+      end
+      vim.cmd(cmd)
+      return
+    end
+    node = node:parent()
+  end
+  print("Function definition not found under cursor")
+end
+
+vim.api.nvim_set_keymap('n', '<leader>pf', ':lua RunTestUnderCursor()<CR>', { noremap = true, silent = true })
 
