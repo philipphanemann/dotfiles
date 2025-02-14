@@ -67,6 +67,14 @@ vim.api.nvim_set_keymap('n', '<Leader>l', '', {
   desc = 'clear highlighted lines'
 })
 
+function yank_file_path_to_clipboard()
+  local file_path = vim.fn.expand('%:p')
+  vim.fn.setreg('+', file_path)
+  print("Yanked file path to clipboard: " .. file_path)
+end
+
+vim.api.nvim_set_keymap('n', '<leader>yp', ':lua yank_file_path_to_clipboard()<CR>', { noremap = true, silent = true })
+
 -- remove trailing whitespace on save
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   pattern = { "*" },
@@ -589,7 +597,7 @@ vim.defer_fn(function()
       swap = {
         enable = true,
         swap_next = {
-          ['<leader>na'] = '@parameter.inner', -- swap parameters/argument with next
+          ['<leader>na'] = '@parameter.inner',  -- swap parameters/argument with next
           ['<leader>nm'] = '@function.outer', -- swap function with next
         },
         swap_previous = {
@@ -691,10 +699,13 @@ require('which-key').register {
   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+  ['<leader>n'] = { name = 'Tresitter [n]ext', _ = 'which_key_ignore' },
+  ['<leader>p'] = { name = 'Tresitter [p]revious', _ = 'which_key_ignore' },
   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+  ['<leader>y'] = { name = '[y]ank', _ = 'which_key_ignore' },
   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
 }
 -- register which-key VISUAL mode
@@ -891,7 +902,7 @@ local function get_class_name(node, bufnr)
   return nil
 end
 
-function RunTestUnderCursor()
+function RunTestUnderCursor(disable_warnings)
   local bufnr = vim.api.nvim_get_current_buf()
   local file_path = vim.api.nvim_buf_get_name(bufnr)
 
@@ -899,6 +910,7 @@ function RunTestUnderCursor()
   cursor_row = cursor_row - 1
 
   local node = ts_utils.get_node_at_cursor()
+
   while node do
     local function_name = get_function_name(node, bufnr)
     if function_name then
@@ -909,13 +921,27 @@ function RunTestUnderCursor()
       else
         cmd = string.format("!pytest %s::%s", file_path, function_name)
       end
-      vim.cmd(cmd)
+      if disable_warnings then
+        cmd = cmd .. " --disable-warnings"
+      end
+        vim.cmd(cmd)
+      return
+    end
+
+    local class_name = get_class_name(node, bufnr)
+    if class_name then
+      local cmd = string.format("!pytest %s::%s", file_path, class_name)
+      if disable_warnings then
+        cmd = cmd .. " --disable-warnings"
+      end
+        vim.cmd(cmd)
       return
     end
     node = node:parent()
   end
-  print("Function definition not found under cursor")
+  print("Function or class definition not found under cursor")
 end
 
-vim.api.nvim_set_keymap('n', '<leader>pf', ':lua RunTestUnderCursor()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>pf', ':lua RunTestUnderCursor(false)<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>pg', ':lua RunTestUnderCursor(true)<CR>', { noremap = true, silent = true })
 
