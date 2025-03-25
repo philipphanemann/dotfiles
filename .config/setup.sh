@@ -1,4 +1,5 @@
-# setting up things
+# setting up things on an ubuntu machine
+
 sudo apt update
 
 # setup python
@@ -32,7 +33,7 @@ tar xf lazygit.tar.gz lazygit
 sudo install lazygit -D -t /usr/local/bin/
 
 
-# install ranger and 
-pipx install ranger-fm
+# install ranger and tldr
+pipx install ranger-fm tldr
 
 
