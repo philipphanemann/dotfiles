@@ -1,0 +1,21 @@
+# nvim shortcut
+alias vim='nvim'
+
+
+# ranger
+alias ranger='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
+
+alias activate_poetry='eval $(poetry env activate)'
+#working shortcuts
+# git aliases
+alias gcam='git ci -am'
+alias gcan='git ci --amend --no-edit'
+alias gcan!='git ci -a --amend --no-edit'
+
+
+# python
+alias ptnw='pytest --disable-warnings'
+alias ptns='pytest -m "not slow"'
+alias rf='ruff format'
+
+
