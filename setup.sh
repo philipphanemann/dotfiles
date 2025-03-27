@@ -12,7 +12,7 @@ sudo apt install pipx -y
 pipx ensurepath
 
 # install cmake and gettext
-sudo apt install cmake gettext ripgrep fd-find fzf -y
+sudo apt install cmake gettext ripgrep fd-find fzf npm unzip -y
 
 mkdir dev/
 # install neovim
@@ -26,14 +26,11 @@ make CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/neovim"
 make install
 export PATH="$HOME/neovim/bin:$PATH"
 
-## setup lazy vim 
+## setup lazy vim
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
 curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
 tar xf lazygit.tar.gz lazygit
 sudo install lazygit -D -t /usr/local/bin/
 
-
 # install ranger and tldr
 pipx install ranger-fm tldr
-
-
