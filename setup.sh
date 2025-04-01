@@ -5,14 +5,14 @@ sudo apt update
 # setup python
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
-sudo apt-get install python3.12-dev -y
+sudo apt-get install -y python3.12-dev
 
 # pipx
-sudo apt install pipx -y
+sudo apt install -y pipx
 pipx ensurepath
 
 # install cmake and gettext
-sudo apt install cmake gettext ripgrep fd-find fzf npm unzip -y
+sudo apt install -ycmake gettext ripgrep fd-find fzf npm unzip luarocks
 
 mkdir $HOME/dev/
 mkdir $HOME/downloads/

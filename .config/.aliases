@@ -6,6 +6,7 @@ alias vim='nvim'
 alias ranger='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
 
 alias activate_poetry='eval $(poetry env activate)'
+
 #working shortcuts
 # git aliases
 alias gcam='git ci -am'
