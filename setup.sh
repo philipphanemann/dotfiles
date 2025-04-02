@@ -21,12 +21,14 @@ mkdir $HOME/downloads/
 git clone https://github.com/neovim/neovim.git $HOME/dev
 cd ~/dev/neovim
 git checkout stable
-
-# install under home not default
+## install under home not default
 rm -r build/ # clear the CMake cache
 make CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/neovim"
 make install
 export PATH="$HOME/neovim/bin:$PATH"
+
+# allow JavaScript/TypeScript-based tools to interact with Neovim
+sudo npm install -g neovim
 
 ## setup lazy vim
 cd $HOME/downloads/
@@ -38,3 +40,8 @@ cd $HOME
 
 # install ranger and tldr
 pipx install ranger-fm tldr
+
+# TODO
+# - docker
+#   - use docker
+# - marp presentations
