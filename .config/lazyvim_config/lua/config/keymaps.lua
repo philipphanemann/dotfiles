@@ -59,3 +59,23 @@ vim.keymap.set("n", "<F11>", function() require("dap").step_into() end, { desc =
 vim.keymap.set("n", "<F17>", function() require("dap").terminate() end, { desc = "Debugger: Terminate" }) -- Shift+F5
 vim.keymap.set("n", "<F23>", function() require("dap").step_out() end, { desc = "Debugger: Step Out" }) -- Shift+F11
 -- stylua: ignore end
+--
+-- un-/highlight lines
+vim.api.nvim_set_keymap("n", "<Leader>ck", "", {
+  noremap = true,
+  silent = true,
+  callback = function()
+    local line_num = vim.fn.line(".")
+    vim.fn.matchadd("Search", "\\%" .. line_num .. "l")
+  end,
+  desc = "highlight line",
+})
+
+vim.api.nvim_set_keymap("n", "<Leader>cj", "", {
+  noremap = true,
+  silent = true,
+  callback = function()
+    vim.fn.clearmatches()
+  end,
+  desc = "clear highlighted lines",
+})
