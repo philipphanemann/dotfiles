@@ -11,8 +11,13 @@ sudo apt-get install -y python3.12-dev
 sudo apt install -y pipx
 pipx ensurepath
 
-# install cmake and gettext
-sudo apt install -ycmake gettext ripgrep fd-find fzf npm unzip luarocks
+sudo mkdir -p /etc/apt/keyrings
+# install node js version 22 using apt
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+
+# install several
+sudo apt install -y cmake gettext ripgrep fd-find fzf npm unzip luarocks nodejs
 
 mkdir $HOME/dev/
 mkdir $HOME/downloads/
@@ -41,6 +46,13 @@ cd $HOME
 # install ranger and tldr
 pipx install ranger-fm tldr
 
+# nerd fonts on WSL
+# download a font on nerd fonts and right click and install "for all users"! (menu extended, i.e. old menue)
+# check echo -e "\uF09B \uF120 \uE0B0"  first is github
+#
+# sunburn color on WSL
+# `export COLORTERM=truecolor` in bashrc
+#
 # TODO
 # - docker
 #   - use docker
