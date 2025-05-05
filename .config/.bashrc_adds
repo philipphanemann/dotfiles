@@ -7,3 +7,4 @@ export EDITOR="$VISUAL"
 export PATH="$HOME/neovim/bin:$PATH"
 
 source ~/.aliases
+source ~/.init_functions.sh
