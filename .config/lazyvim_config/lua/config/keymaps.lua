@@ -22,6 +22,18 @@ Snacks.toggle
   :map("<leader>uP")
 
 
+Snacks.toggle
+  .new({
+    name = "virtual_lines",
+    get = function()
+      return vim.diagnostic.config().virtual_lines
+    end,
+    set = function(_)
+      require("utils.lsp_utils").toggle_virtual_lines({ silent = true })
+    end,
+  })
+  :map("<leader>uv")
+--
 -- Add a keympa to toggle yamlls using schemastore or not
 Snacks.toggle
   .new({
@@ -35,7 +47,6 @@ Snacks.toggle
     end,
   })
   :map("<leader>uy")
-
 
 -- Toggle automatic spell checker language switching
 Snacks.toggle
@@ -105,7 +116,6 @@ end
 vim.api.nvim_set_keymap("i", "<C-p>", "import pdbp; pdbp.set_trace()<Esc>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>yp", ":lua yank_file_path_to_clipboard()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>yI", ":lua PythonImportStatement()<CR>", { noremap = true, silent = true })
-
 
 -- Disable LazyVim's Alt+j/k line movement
 -- since Esc + j/k is treated as such if it does not timeout

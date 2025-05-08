@@ -40,6 +40,11 @@ function M.toggle_basedpyright_settings(opts)
   end, 100)
 end
 
+function M.toggle_virtual_lines(opts)
+  local current = vim.diagnostic.config().virtual_lines
+  vim.diagnostic.config({ virtual_lines = not current })
+end
+
 -- Toggle yamlls schemaStore.enable setting
 function M.toggle_yaml_schema_store(opts)
   opts = opts or {}
