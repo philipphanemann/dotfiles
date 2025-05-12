@@ -67,3 +67,12 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     require("utils.spell_utils").apply_spell_language(main_file, typ_pattern, header_lines, desired_lang)
   end,
 })
+
+-- TODO: include this into a snacks toogle
+-- Disable autoformat for py files
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "python" },
+  callback = function()
+    vim.b.autoformat = false
+  end,
+})
