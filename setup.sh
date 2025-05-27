@@ -14,11 +14,13 @@ sudo apt update; sudo apt install -y build-essential libssl-dev zlib1g-dev \
 libbz2-dev libreadline-dev libsqlite3-dev curl git \
 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
-echo "setup homebrew, e.g. to install language server"
+echo "setup brew (homebrew), e.g. to install language server"
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 echo >> /home/phil/.bashrc
 echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/phil/.bashrc
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+brew install basedpyright
+brew install yaml-language-server
 
 echo "install pipx"
 sudo apt install -y pipx
@@ -55,7 +57,7 @@ export PATH="$HOME/neovim/bin:$PATH"
 echo "allow JavaScript/TypeScript-based tools to interact with Neovim"
 sudo npm install -g neovim
 
-echo "setup lazy vim"
+echo "setup lazy git"
 cd $HOME/downloads/
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
 curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
