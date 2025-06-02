@@ -238,6 +238,7 @@ map("n", "<leader>gL", function() Snacks.picker.git_log() end, { desc = "Git Log
 map("n", "<leader>gl", function() Snacks.picker.git_log({ cwd = require("utils.helpers").git_root() }) end, { desc = "Git Log" })
 map("n", "<leader>gb", function() Snacks.picker.git_log_line() end, { desc = "Git Blame Line" })
 map("n", "<leader>gf", function() Snacks.picker.git_log_file() end, { desc = "Git Current File History" })
+map("n", "<leader>gF", "<cmd>Gitsigns blame<cr>", { desc = "Git blame file." })
 map("n", "<leader>gB", function() Snacks.picker.git_branches() end, { desc = "Git Branches" })
 map("n", "<leader>gs", function() Snacks.picker.git_status() end, { desc = "Git Status" })
 map("n", "<leader>gS", function() Snacks.picker.git_stash() end, { desc = "Git Stash" })
