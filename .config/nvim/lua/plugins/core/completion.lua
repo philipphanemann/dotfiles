@@ -1,11 +1,22 @@
+local source_priority = {
+	copilot = 50,
+	conventional_commits = 3,
+	git = 2,
+	lsp = 1,
+	path = 0,
+	snippets = -1,
+	buffer = -2,
+	lazydev = -10,
+}
+
 return {
 	{
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
 		opts = {
-			suggestion = { enabled = false },
-			panel = { enabled = false },
+			suggestion = { enabled = true, debounce = 200 },
+			panel = { enabled = true },
 		},
 	},
 	{
@@ -132,7 +143,30 @@ return {
 			-- the rust implementation via `'prefer_rust_with_warning'`
 			--
 			-- See :h blink-cmp-config-fuzzy for more information
-			fuzzy = { implementation = "lua" },
+			-- Blink.cmp includes an optional, recommended rust fuzzy matcher,
+			-- which automatically downloads a prebuilt binary when enabled.
+			--
+			-- By default, we use the Lua implementation instead, but you may enable
+			-- the rust implementation via `'prefer_rust_with_warning'`
+			--
+			-- See :h blink-cmp-config-fuzzy for more information
+			fuzzy = {
+				implementation = "lua",
+				sorts = {
+					-- 1) Custom source-priority comparator
+					function(a, b)
+						local pa = source_priority[a.source_id] or 0
+						local pb = source_priority[b.source_id] or 0
+						if pa ~= pb then
+							return pa > pb
+						end
+						-- 2) Fallback to Blink’s default scoring
+						return a.score > b.score
+					end,
+					-- 3) Then by sort_text to stabilize ties
+					"sort_text",
+				},
+			},
 
 			-- Shows a signature help window while you type arguments for a function
 			signature = { enabled = true },
