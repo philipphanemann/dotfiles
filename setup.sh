@@ -21,6 +21,7 @@ echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/phil/.bas
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew install basedpyright
 brew install yaml-language-server
+brew install jsonlint
 
 echo "install pipx"
 sudo apt install -y pipx
