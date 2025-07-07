@@ -4,12 +4,17 @@ echo "apt update"
 sudo apt update
 
 echo "setup python using pyen + adding to bash + restarting shell"
-curl -fsSL https://pyenv.run | bash
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-echo 'eval "$(pyenv init - bash)"' >> ~/.bashrc
-echo "install python build dependencies"
-exec "$SHELL"
+if [ ! -d "$HOME/.pyenv" ]; then
+	curl -fsSL https://pyenv.run | bash
+	echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+	echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+	echo 'eval "$(pyenv init - bash)"' >> ~/.bashrc
+	echo "install python build dependencies"
+	exec "$SHELL"
+  # Your install script or commands go here
+else
+  echo "Skipping install: $HOME/.pyenv already exists."
+fi
 sudo apt update; sudo apt install -y build-essential libssl-dev zlib1g-dev \
 libbz2-dev libreadline-dev libsqlite3-dev curl git \
 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
@@ -42,11 +47,15 @@ nvm install node
 echo "install other tools"
 sudo apt install -y cmake gettext ripgrep fd-find fzf unzip luarocks 
 
-mkdir $HOME/dev/
+if [ ! -d "$HOME/dev" ]; then
+  echo "creating dev dir"
+  mkdir $HOME/dev/
+fi
+
 mkdir $HOME/downloads/
 
 echo "install neovim"
-# git clone https://github.com/neovim/neovim.git $HOME/dev/neovim
+git clone https://github.com/neovim/neovim.git $HOME/dev/neovim
 cd $HOME/dev/neovim
 git checkout stable
 ## install under home not default
@@ -67,7 +76,9 @@ sudo install lazygit -D -t /usr/local/bin/
 cd $HOME
 
 echo "install ranger and tldr"
-pipx install ranger-fm tldr
+sudo pipx install ranger-fm tldr
+export PATH="$HOME/.local/bin:$PATH"
+
 
 # nerd fonts on WSL
 # download a font on nerd fonts and right click and install "for all users"! (menu extended, i.e. old menue)
@@ -76,7 +87,7 @@ echo -e "\uF09B \uF120 \uE0B0"
 
 
 echo "allow using sunburn color on WSL"
-export COLORTERM=truecolor` in bashrc
+export COLORTERM=truecolor # in bashrc
 #
 # TODO
 # - docker
