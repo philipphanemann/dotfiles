@@ -31,6 +31,7 @@ brew install jsonlint
 echo "install pipx"
 sudo apt install -y pipx
 pipx ensurepath
+pipx install vectorcode # needed for nvim code companion 
 
 sudo mkdir -p /etc/apt/keyrings
 

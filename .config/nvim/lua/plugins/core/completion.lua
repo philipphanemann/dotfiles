@@ -172,4 +172,86 @@ return {
 			signature = { enabled = true },
 		},
 	},
+	{
+		"olimorris/codecompanion.nvim",
+		-- https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/plugins/coding.lua
+		opts = {},
+		cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"j-hui/fidget.nvim", -- Display status
+			"ravitemer/codecompanion-history.nvim", -- Save and load conversation history
+			{
+				"ravitemer/mcphub.nvim", -- Manage MCP servers
+				cmd = "MCPHub",
+				build = "npm install -g mcp-hub@latest",
+				config = true,
+			},
+			{
+				"Davidyz/VectorCode", -- Index and search code in your repositories
+				version = "*",
+				build = "pipx upgrade vectorcode",
+				dependencies = { "nvim-lua/plenary.nvim" },
+			},
+		},
+		strategies = {
+			chat = {
+				adapter = {
+					name = "copilot",
+					model = "claude-sonnet-4-20250514",
+				},
+			},
+		},
+
+		display = {
+			action_palette = {
+				width = 95,
+				height = 10,
+				prompt = "Prompt ", -- Prompt used for interactive LLM calls
+				provider = "default", -- Can be "default", "telescope", "fzf_lua", "mini_pick" or "snacks". If not specified, the plugin will autodetect installed providers.
+				opts = {
+					show_default_actions = true, -- Show the default actions in the action palette?
+					show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+				},
+			},
+		},
+		chat = {
+			-- As of v17.5.0, variables must be wrapped in curly braces, such as #{buffer} or #{lsp}
+			--https://codecompanion.olimorris.dev/usage/chat-buffer/variables.html#buffer
+			variables = {
+				["my_var"] = {
+					---Ensure the file matches the CodeCompanion.Variable class
+					---@return string|fun(): nil
+					callback = "/Users/Oli/Code/my_var.lua",
+					description = "Explain what my_var does",
+					opts = {
+						contains_code = false,
+						--has_params = true,    -- Set this if your variable supports parameters
+						--default_params = nil, -- Set default parameters
+					},
+				},
+			},
+		},
+		keys = {
+			{
+				"<C-a>",
+				"<cmd>CodeCompanionActions<CR>",
+				desc = "Open the action palette",
+				mode = { "n", "v" },
+			},
+			{
+				"<Leader>a",
+				"<cmd>CodeCompanionChat Toggle<CR>",
+				desc = "Toggle a chat buffer",
+				mode = { "n", "v" },
+			},
+			{
+				"<LocalLeader>a",
+				"<cmd>CodeCompanionChat Add<CR>",
+				desc = "Add code to a chat buffer",
+				mode = { "v" },
+			},
+		},
+	},
 }
