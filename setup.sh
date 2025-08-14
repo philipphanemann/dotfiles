@@ -78,7 +78,8 @@ sudo install lazygit -D -t /usr/local/bin/
 cd $HOME
 
 echo "install ranger and tldr"
-sudo pipx install ranger-fm tldr
+pipx install ranger-fm tldr
+pipx ensurepath
 export PATH="$HOME/.local/bin:$PATH"
 
 
