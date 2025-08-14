@@ -188,6 +188,7 @@ map("n", "<leader>e", function() Snacks.explorer() end, { desc = "File Explorer"
 map("n", "<leader>fb", function() Snacks.picker.buffers() end, { desc = "Buffers" })
 map("n", "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, { desc = "Find Config File" })
 map("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "Find Files" })
+map("n", "<leader>fw", function() Snacks.picker.files({search=vim.fn.expand("<cword>")}) end, { desc = "Find Files under cursor" })
 map("n", "<leader>fg", function() Snacks.picker.git_files() end, { desc = "Find Git Files" })
 map("n", "<leader>fp", function() Snacks.picker.projects() end, { desc = "Projects" })
 map("n", "<leader>fr", function() Snacks.picker.recent() end, { desc = "Recent" })
