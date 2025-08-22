@@ -235,7 +235,7 @@ return {
 		},
 		keys = {
 			{
-				"<C-a>",
+				"<C-e>", -- C-a  would overwrite vims default increment
 				"<cmd>CodeCompanionActions<CR>",
 				desc = "Open the action palette",
 				mode = { "n", "v" },
