@@ -96,3 +96,8 @@ export COLORTERM=truecolor # in bashrc
 # - docker
 #   - use docker
 # - marp presentations
+#
+# symlink config files
+ln -s $script_dir/.config/.tmux.conf $HOME/.tmux.conf
+ln -s $script_dir/.config/.init_functions.sh $HOME/.init_functions.sh
+
