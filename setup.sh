@@ -67,9 +67,12 @@ echo "install neovim"
 git clone https://github.com/neovim/neovim.git $HOME/dev/neovim
 cd $HOME/dev/neovim
 git checkout stable
+
 ## install under home not default
-rm -r build/ # clear the CMake cache
-make CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/neovim"
+rm -rf build
+# or: make distclean
+
+make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX="$HOME/neovim"
 make install
 export PATH="$HOME/neovim/bin:$PATH"
 
