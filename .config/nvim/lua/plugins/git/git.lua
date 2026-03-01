@@ -33,87 +33,59 @@ return {
 		},
 	},
 	{
-		"sindrets/diffview.nvim",
-		cmd = { "DiffviewOpen" },
-		opts = function()
-			local actions = require("diffview.actions")
+		"spacedentist/resolve.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		opts = {
+			on_conflict_detected = function(ctx)
+				local bufnr = ctx.bufnr
+				-- remember original state only once
+				if vim.b[bufnr].resolve_prev_diags_enabled == nil then
+					vim.b[bufnr].resolve_prev_diags_enabled = vim.diagnostic.is_enabled({ bufnr = bufnr })
+				end
+				vim.diagnostic.enable(false, { bufnr = bufnr })
+			end,
+			on_conflicts_resolved = function(ctx)
+				local bufnr = ctx.bufnr
+				local prev = vim.b[bufnr].resolve_prev_diags_enabled
+				if prev ~= nil then
+					vim.diagnostic.enable(prev, { bufnr = bufnr })
+					vim.b[bufnr].resolve_prev_diags_enabled = nil
+				end
+			end,
+		},
+		config = function(_, opts)
+			-- setup with opts defined above
+			require("resolve").setup(opts)
 
-			return {
-				enhanced_diff_hl = true,
-				view = {
-					default = { winbar_info = true },
-					file_history = { winbar_info = true },
-				},
-				hooks = {
-					diff_buf_read = function(bufnr)
-						vim.b[bufnr].view_activated = false
-					end,
-				},
+			-- load tokyonight colors and utils for blending colors
+			-- (otherwise its too mich highlighting)
+			local colors = require("tokyonight.colors").setup()
+			local util = require("tokyonight.util")
 
-        -- 2️⃣  only the key-maps that matter
-        -- stylua: ignore
-        keymaps = {
-          view = {
-            -- disable originals
-            ["<leader>co"] = false,
-            ["<leader>ct"] = false,
-            ["<leader>cb"] = false,
-            ["<leader>ca"] = false,
-            ["<leader>cO"] = false,
-            ["<leader>cT"] = false,
-            ["<leader>cB"] = false,
-            ["<leader>cA"] = false,
-            ["dx"] = false,
-            ["dX"] = false,
-            -- local-leader replacements
-            { "n", "<localleader>o", actions.conflict_choose("ours"),       { desc = "Choose OURS" } },
-            { "n", "<localleader>t", actions.conflict_choose("theirs"),     { desc = "Choose THEIRS" } },
-            { "n", "<localleader>b", actions.conflict_choose("base"),       { desc = "Choose BASE" } },
-            { "n", "<localleader>a", actions.conflict_choose("all"),        { desc = "Choose ALL" } },
-            { "n", "<localleader>x", actions.conflict_choose("none"),       { desc = "Delete conflict" } },
-            { "n", "<localleader>O", actions.conflict_choose_all("ours"),   { desc = "Choose OURS for all" } },
-            { "n", "<localleader>T", actions.conflict_choose_all("theirs"), { desc = "Choose THEIRS for all" } },
-            { "n", "<localleader>B", actions.conflict_choose_all("base"),   { desc = "Choose BASE for all" } },
-            { "n", "<localleader>A", actions.conflict_choose_all("all"),    { desc = "Choose ALL for all" } },
-            { "n", "<localleader>X", actions.conflict_choose_all("none"),   { desc = "Delete conflict for all" } },
-          },
-          file_panel = {
-            ["<leader>cO"] = false,
-            ["<leader>cT"] = false,
-            ["<leader>cB"] = false,
-            ["<leader>cA"] = false,
-            ["dX"] = false,
-            { "n", "<localleader>O", actions.conflict_choose_all("ours"),   { desc = "OURS for all" } },
-            { "n", "<localleader>T", actions.conflict_choose_all("theirs"), { desc = "THEIRS for all" } },
-            { "n", "<localleader>B", actions.conflict_choose_all("base"),   { desc = "BASE for all" } },
-            { "n", "<localleader>A", actions.conflict_choose_all("all"),    { desc = "ALL for all" } },
-            { "n", "<localleader>X", actions.conflict_choose_all("none"),   { desc = "Delete conflict for the whole file" } },
-          },
-        },
+			-- set colors for highlights
+			local OursBaseColor = colors.green
+			local TheirsBaseColor = colors.blue
+			local AncestorBaseColor = colors.magenta
+			local SeparatorBaseColor = colors.orange
+
+			-- apply based on above colors
+			local highlights = {
+				ResolveOursMarker = { bg = util.blend_bg(OursBaseColor, 0.4), bold = true },
+				ResolveOursSection = { bg = util.blend_bg(OursBaseColor, 0.15) },
+
+				ResolveTheirsMarker = { bg = util.blend_bg(TheirsBaseColor, 0.4), bold = true },
+				ResolveTheirsSection = { bg = util.blend_bg(TheirsBaseColor, 0.15) },
+
+				ResolveAncestorMarker = { bg = util.blend_bg(AncestorBaseColor, 0.4), bold = true },
+				ResolveAncestorSection = { bg = util.blend_bg(AncestorBaseColor, 0.15) },
+
+				ResolveSeparatorMarker = { bg = util.blend_bg(SeparatorBaseColor, 0.3), bold = true },
 			}
+
+			for group, settings in pairs(highlights) do
+				vim.api.nvim_set_hl(0, group, settings)
+			end
 		end,
-		keys = {
-			{
-				prefix .. "v",
-				"<Cmd>DiffviewOpen<CR>",
-				desc = "Open DiffView",
-				mode = "n",
-			},
-			{
-				prefix .. "q",
-				"<Cmd>DiffviewClose<CR>",
-				desc = "Close DiffView",
-				mode = "n",
-			},
-		},
-		-- temp comment
-		specs = {
-			{
-				"NeogitOrg/neogit",
-				optional = true,
-				opts = { integrations = { diffview = true } },
-			},
-		},
 	},
 	{
 		"wintermute-cell/gitignore.nvim",

@@ -8,6 +8,10 @@ local source_priority = {
 	buffer = -2,
 	lazydev = -10,
 }
+local prefix = "<Leader>a"
+local free_model_copilot = "claude-sonnet-4.5"
+-- Used in codecompanion config
+local cc_base = vim.fn.stdpath("config") .. "/ai/codecompanion"
 
 return {
 	{
@@ -173,88 +177,354 @@ return {
 		},
 	},
 	{
+		"Davidyz/VectorCode",
+		version = "*", -- optional, depending on whether you're on nightly or release
+		dependencies = { "nvim-lua/plenary.nvim" },
+	},
+	{
 		"olimorris/codecompanion.nvim",
-		-- https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/plugins/coding.lua
-		opts = {},
-		cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
+		event = "VeryLazy",
+		lazy = true,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-			"j-hui/fidget.nvim", -- Display status
-			"ravitemer/codecompanion-history.nvim", -- Save and load conversation history
-			{
-				"ravitemer/mcphub.nvim", -- Manage MCP servers
-				cmd = "MCPHub",
-				build = "npm install -g mcp-hub@latest",
-				config = true,
-			},
-			{
-				"Davidyz/VectorCode", -- Index and search code in your repositories
-				version = "*",
-				build = "pipx upgrade vectorcode",
-				dependencies = { "nvim-lua/plenary.nvim" },
-			},
+			"ravitemer/mcphub.nvim",
+			"folke/snacks.nvim",
+			"ravitemer/codecompanion-history.nvim",
 		},
-		strategies = {
-			chat = {
-				adapter = {
-					name = "claude",
-					model = "claude-sonnet-4-20250514",
-				},
-			},
-			inline = {
-				adapter = "copilot",
-			},
-		},
+		opts = {
+			-- adapters and models
+			interactions = {
+				chat = {
+					adapter = {
+						name = "copilot",
+						model = free_model_copilot,
+					},
+					tools = {
+						opts = {
+							default_tools = {
+								-- core bundle with most of CCs tools
+								"full_stack_dev",
 
-		display = {
-			action_palette = {
-				width = 95,
-				height = 10,
-				prompt = "Prompt ", -- Prompt used for interactive LLM calls
-				provider = "default", -- Can be "default", "telescope", "fzf_lua", "mini_pick" or "snacks". If not specified, the plugin will autodetect installed providers.
-				opts = {
-					show_default_actions = true, -- Show the default actions in the action palette?
-					show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+								-- useful MCP servers
+								"git",
+								"vectorcode",
+								"context7",
+
+								-- web stuff
+								"duckduckgo_search",
+								"fetch_webpage",
+							},
+						},
+
+						groups = {
+							-- one group to rule them all :)
+							["all_the_tools"] = {
+								description = "All CC tools + MCP + web",
+								tools = {
+									-- core bundle with most of CCs tools
+									"full_stack_dev",
+
+									-- useful MCP servers
+									-- NOTE: these are available in the mcp group,
+									-- but we make them explicitly available here so
+									-- the chat does not need to go through the @{mcp} tool
+									-- to get to these very important ones
+									"git",
+									"vectorcode",
+									"context7",
+
+									-- meta-group containing all MCP server tools
+									"mcp",
+
+									-- web stuff
+									"duckduckgo_search",
+									"fetch_webpage",
+
+									-- probably nice to have?
+									"next_edit_suggestion",
+								},
+								opts = { collapse_tools = true },
+							},
+						},
+					},
+				},
+				inline = {
+					adapter = {
+						name = "copilot",
+						model = free_model_copilot,
+					},
 				},
 			},
-		},
-		chat = {
-			-- As of v17.5.0, variables must be wrapped in curly braces, such as #{buffer} or #{lsp}
-			--https://codecompanion.olimorris.dev/usage/chat-buffer/variables.html#buffer
-			variables = {
-				["my_var"] = {
-					---Ensure the file matches the CodeCompanion.Variable class
-					---@return string|fun(): nil
-					callback = "/Users/Oli/Code/my_var.lua",
-					description = "Explain what my_var does",
+
+			extensions = {
+				-- register MCP Hub as a CodeCompanion extension (official integration)
+				mcphub = {
+					callback = "mcphub.extensions.codecompanion",
 					opts = {
-						contains_code = false,
-						--has_params = true,    -- Set this if your variable supports parameters
-						--default_params = nil, -- Set default parameters
+						-- expose MCP resources as #{mcp:*} variables
+						make_vars = true,
+						-- add MCP prompts as /mcp:* slash commands
+						make_slash_commands = true,
+						-- show MCP tool results directly in chat
+						show_result_in_chat = true,
+						-- convert MCP servers and tools to CodeCompanion tools/groups
+						make_tools = true,
+						-- optionally show each server tool individually in chat UI
+						show_server_tools_in_chat = true,
+						-- add_mcp_prefix_to_tool_names = false,
+					},
+				},
+				-- register VectorCode as a CodeCompanion extension
+				vectorcode = {
+					opts = {
+						add_tool = true,
+						add_slash_command = true,
+					},
+					tool_opts = {
+						-- configure all tools with common settings
+						["*"] = {
+							require_approval_before = false,
+							include_in_toolbox = true,
+						},
+						-- specific config for querying vectorcode DB
+						query = {
+							chunk_mode = false,
+							max_num = 10, -- max files to retrieve
+							default_num = 5, -- default files to retrieve
+						},
+					},
+				},
+				-- register history extension
+				history = {
+					enabled = true,
+					opts = {
+						-- Keymap to open history from chat buffer (default: gh)
+						keymap = "gh",
+						-- Keymap to save the current chat manually (when auto_save is disabled)
+						save_chat_keymap = "gH",
+						-- Save all chats by default (disable to save only manually using 'sc')
+						auto_save = true,
+						-- Number of days after which chats are automatically deleted (0 to disable)
+						expiration_days = 0,
+						-- Picker interface (auto resolved to a valid picker)
+						picker = "snacks", --- ("telescope", "snacks", "fzf-lua", or "default")
+						---Optional filter function to control which chats are shown when browsing
+						chat_filter = function(chat_data)
+							-- only use chats from cwd
+							local same_cwd = (chat_data.cwd == vim.fn.getcwd())
+
+							-- only keep chats from last 14 days
+							local last_seven_days = os.time() - (14 * 24 * 60 * 60)
+							local is_recent = chat_data.updated_at ~= nil and chat_data.updated_at >= last_seven_days
+
+							return same_cwd and is_recent
+						end,
+						-- Customize picker keymaps (optional)
+						picker_keymaps = {
+							rename = { n = "r", i = "<M-r>" },
+							delete = { n = "d", i = "<M-d>" },
+							duplicate = { n = "<C-y>", i = "<C-y>" },
+						},
+						---Automatically generate titles for new chats
+						auto_generate_title = true,
+						title_generation_opts = {
+							---Adapter for generating titles (defaults to current chat adapter)
+							adapter = "copilot", -- "copilot"
+							---Model for generating titles (defaults to current chat model)
+							model = free_model_copilot, -- "gpt-4o"
+							---Number of user prompts after which to refresh the title (0 to disable)
+							refresh_every_n_prompts = 3, -- e.g., 3 to refresh after every 3rd user prompt
+							---Maximum number of times to refresh the title (default: 3)
+							max_refreshes = 3,
+							format_title = function(original_title)
+								-- this can be a custom function that applies some custom
+								-- formatting to the title.
+								return original_title
+							end,
+						},
+						---On exiting and entering neovim, loads the last chat on opening chat
+						continue_last_chat = false,
+						---When chat is cleared with `gx` delete the chat from history
+						delete_on_clearing_chat = false,
+						---Directory path to save the chats
+						dir_to_save = vim.fn.stdpath("data") .. "/codecompanion-history",
+						---Enable detailed logging for history extension
+						enable_logging = false,
+
+						-- Summary system
+						summary = {
+							-- Keymap to generate summary for current chat (default: "gcs")
+							create_summary_keymap = "gZ",
+							-- Keymap to browse summaries (default: "gbs")
+							browse_summaries_keymap = "gz",
+
+							generation_opts = {
+								adapter = "copilot", -- defaults to current chat adapter
+								model = free_model_copilot, -- defaults to current chat model
+								context_size = 90000, -- max tokens that the model supports
+								include_references = true, -- include slash command content
+								include_tool_outputs = true, -- include tool execution results
+								system_prompt = nil, -- custom system prompt (string or function)
+								format_summary = nil, -- custom function to format generated summary e.g to remove <think/> tags from summary
+							},
+						},
+
+						-- Memory system (requires VectorCode CLI)
+						memory = {
+							-- Automatically index summaries when they are generated
+							auto_create_memories_on_summary_generation = true,
+							-- Path to the VectorCode executable
+							vectorcode_exe = "vectorcode",
+							-- Tool configuration
+							tool_opts = {
+								-- Default number of memories to retrieve
+								default_num = 10,
+							},
+							-- Enable notifications for indexing progress
+							notify = true,
+							-- Index all existing memories on startup
+							-- (requires VectorCode 0.6.12+ for efficient incremental indexing)
+							index_on_startup = true,
+						},
+					},
+				},
+			},
+
+			-- UI preferences
+			display = {
+				action_palette = { provider = "snacks" },
+				chat = {
+					-- needs to be false, otherwise cant switch adapters :rolleyes:
+					show_settings = false,
+					show_context = true,
+				},
+			},
+
+			prompt_library = {
+				markdown = {
+					dirs = {
+						-- globel prompts in this config
+						cc_base .. "/prompts",
+
+						-- project local prompts
+						".codecompanion/prompts",
+					},
+				},
+			},
+
+			rules = {
+				-- Personal defaults (live nvim config)
+				personal = {
+					description = "Personal defaults (always loaded)",
+					parser = "codecompanion",
+					files = {
+						cc_base .. "/rules/personal.md",
+					},
+				},
+
+				-- task rules (loaded per-prompt via opts.rules)
+				task_research = {
+					description = "Task: Search then answer",
+					parser = "codecompanion",
+					files = {
+						cc_base .. "/rules/task/research.md",
+						cc_base .. "/rules/output/research.md",
+					},
+				},
+				task_gtd = {
+					description = "Task: GTD (plan + execute)",
+					parser = "codecompanion",
+					files = { cc_base .. "/rules/task/gtd.md" },
+				},
+				task_change_summary = {
+					description = "Task: Summarize git changes",
+					parser = "codecompanion",
+					files = { cc_base .. "/rules/task/change-summary.md" },
+				},
+				task_write_docs = {
+					description = "Task: Write documentation",
+					parser = "codecompanion",
+					files = {
+						cc_base .. "/rules/task/research.md",
+						cc_base .. "/rules/task/write-docs.md",
+						cc_base .. "/rules/output/docs.md",
+					},
+				},
+				task_review_changes = {
+					description = "Task: Review staged/unstaged diffs",
+					parser = "codecompanion",
+					files = {
+						cc_base .. "/rules/task/review-changes.md",
+						cc_base .. "/rules/output/review-changes.md",
+					},
+				},
+				task_write_tests = {
+					description = "Task: Write tests",
+					parser = "codecompanion",
+					files = {
+						cc_base .. "/rules/task/write-tests.md",
+						cc_base .. "/rules/output/write-tests.md",
+					},
+				},
+				task_explain_arch = {
+					description = "Task: Explain architecture",
+					parser = "codecompanion",
+					files = {
+						cc_base .. "/rules/task/explain-architecture.md",
+						cc_base .. "/rules/output/explain-architecture.md",
+					},
+				},
+
+				-- project rules (autoloaded when present in the repo)
+				project = {
+					description = "Collection of common files for all projects",
+					files = {
+						".clinerules",
+						".cursorrules",
+						".goosehints",
+						".rules",
+						".windsurfrules",
+						".github/copilot-instructions.md",
+						"AGENT.md",
+						"AGENTS.md",
+						{ path = "CLAUDE.md", parser = "claude" },
+						{ path = "CLAUDE.local.md", parser = "claude" },
+						{ path = "~/.claude/CLAUDE.md", parser = "claude" },
+						".codecompanion/rules/project.md",
+					},
+					is_preset = true,
+				},
+
+				-- additional project rules (load on demand)
+				project_extra = {
+					description = "Additional project rules (load on demand)",
+					files = {
+						".codecompanion/rules/**/*.md",
+					},
+				},
+
+				opts = {
+					chat = {
+						enabled = true,
+						autoload = { "personal", "project" },
 					},
 				},
 			},
 		},
+
 		keys = {
-			{
-				"<C-e>", -- C-a  would overwrite vims default increment
-				"<cmd>CodeCompanionActions<CR>",
-				desc = "Open the action palette",
-				mode = { "n", "v" },
-			},
-			{
-				"<Leader>a",
-				"<cmd>CodeCompanionChat Toggle<CR>",
-				desc = "Toggle a chat buffer",
-				mode = { "n", "v" },
-			},
-			{
-				"<LocalLeader>a",
-				"<cmd>CodeCompanionChat Add<CR>",
-				desc = "Add code to a chat buffer",
-				mode = { "v" },
-			},
+			{ prefix .. "a", "<cmd>CodeCompanionActions<cr>", desc = "Actions palette", mode = { "n", "v" } },
+			{ prefix .. "c", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Chat toggle", mode = { "n", "v" } },
+      -- stylua: ignore
+      { prefix .. "C", function() require("codecompanion.adapters.http.copilot.stats").show() end, desc = "Copilot stats", mode = "n" },
+			{ prefix .. "A", "<cmd>CodeCompanionChat Add<cr>", desc = "Add selection to chat", mode = "v" },
+			{ prefix .. "B", "<cmd>CodeCompanionChat Add<cr>", desc = "Add current buffer to chat", mode = "n" },
+			{ prefix .. "i", "<cmd>CodeCompanion<cr>", desc = "Inline assistant", mode = { "n", "v" } },
+			{ prefix .. "e", ":'<,'>CodeCompanion /explain<cr>", desc = "Explain selection", mode = "v" },
+			{ prefix .. "f", ":'<,'>CodeCompanion /fix<cr>", desc = "Fix selection", mode = "v" },
+			{ prefix .. "t", ":'<,'>CodeCompanion /tests<cr>", desc = "Generate tests", mode = "v" },
+			{ prefix .. "R", "<cmd>CodeCompanionChat RefreshCache<cr>", desc = "Refresh tool cache", mode = "n" },
 		},
 	},
 }
