@@ -339,5 +339,8 @@ map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 --
 -- python
 map("n", "<leader>yp", function() require("utils.python_utils").yank_file_path_to_clipboard() end, { desc = "yank filepath to clipboard" })
-map("n", "<leader>yI", function() require("utils.python_utils").PythonFileImportStatement() end, { desc = "yank star import of module" })
+map("n", "<leader>yI", function() 
+  require("utils.python_utils").PythonFileImportStatement(vim.fn.expand("<cword>")) 
+end, { desc = "yank import of variable under cursor" })
 vim.api.nvim_set_keymap("i", "<C-p>", "import pdbp; pdbp.set_trace()<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>ti", "<Esc>A # type: ignore<Esc>a", { noremap = true, silent = true })

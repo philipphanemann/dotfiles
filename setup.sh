@@ -33,6 +33,8 @@ echo "install language servers"
 brew install basedpyright
 brew install yaml-language-server
 brew install jsonlint
+brew install lua-language-server
+
 
 
 
@@ -54,7 +56,7 @@ source $HOME/.bashrc
 nvm install node
 
 echo "install other tools"
-sudo apt install -y cmake gettext ripgrep fd-find fzf unzip luarocks 
+sudo apt install -y cmake gettext ripgrep fd-find fzf unzip luarocks git-delta
 
 if [ ! -d "$HOME/dev" ]; then
   echo "creating dev dir"
