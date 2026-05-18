@@ -3,11 +3,14 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- do not use swapfiles
+vim.opt.swapfile = false
+
 -- Indentation settings
 vim.opt.expandtab = true -- Convert tabs to spaces
-vim.opt.shiftwidth = 4 -- Amount to indent with < and >
-vim.opt.tabstop = 4 -- How many spaces are shown per Tab
-vim.opt.softtabstop = 4 -- How many spaces are applied when pressing Tab
+vim.opt.shiftwidth = 4   -- Amount to indent with < and >
+vim.opt.tabstop = 4      -- How many spaces are shown per Tab
+vim.opt.softtabstop = 4  -- How many spaces are applied when pressing Tab
 vim.opt.smarttab = true
 vim.opt.smartindent = true
 vim.opt.autoindent = true -- Keep identation from previous line
@@ -98,24 +101,24 @@ vim.opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "
 
 vim.opt.clipboard = "unnamedplus"
 if vim.env.SSH_TTY then
-  local function paste()
-    return {
-      vim.fn.split(vim.fn.getreg(""), "\n"),
-      vim.fn.getregtype(""),
-    }
-  end
+    local function paste()
+        return {
+            vim.fn.split(vim.fn.getreg(""), "\n"),
+            vim.fn.getregtype(""),
+        }
+    end
 
-  vim.g.clipboard = {
-    name = "OSC52",
-    copy = {
-      ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-      ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-    },
-    paste = {
-      ["+"] = paste,
-      ["*"] = paste,
-    },
-  }
+    vim.g.clipboard = {
+        name = "OSC52",
+        copy = {
+            ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+            ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+        },
+        paste = {
+            ["+"] = paste,
+            ["*"] = paste,
+        },
+    }
 end
 
 -- Prepend mise shims to PATH
