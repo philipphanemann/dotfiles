@@ -9,7 +9,7 @@ local source_priority = {
     lazydev = -10,
 }
 local prefix = "<Leader>a"
-local free_model_copilot = "gpt-5-mini"  --"claude-sonnet-4.6"
+local free_model_copilot = "claude-sonnet-4.6" --"gpt-5-mini"
 -- Used in codecompanion config
 local cc_base = vim.fn.stdpath("config") .. "/ai/codecompanion"
 

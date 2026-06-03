@@ -60,3 +60,11 @@ If you genuinely think a convention is harmful, surface it. Don't fork silently.
 "Completed" is wrong if anything was skipped silently.
 "Tests pass" is wrong if any were skipped.
 Default to surfacing uncertainty, not hiding it.
+
+## Testing Rules
+Use polars or pandas assert_frame_equal instead of comparing single rows or elements.
+Prepare simple number examples instead of chaining preprocessing functions.
+Use parametrized test functions when only the arguments vary.
+Test nothing which is implied, e.g. via type hints.
+Keep transformation logic in pure functions — no side effects.
+
