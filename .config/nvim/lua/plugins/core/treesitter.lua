@@ -43,11 +43,11 @@ return {
 			-- Install parsers synchronously (only applied to `ensure_installed`)
 			sync_install = false,
 
-			-- Modules
-			-- Consistent syntax highlighting.
-			highlight = { enable = true },
+		-- Modules
+		-- Consistent syntax highlighting.
+		highlight = { enable = true },
 
-			-- Indentation based on treesitter for the = operator.
+		-- Indentation based on treesitter for the = operator.
 			indent = { enable = true },
 
 			-- Incremental selection based on the named nodes from the grammar.
