@@ -80,6 +80,7 @@ export PATH="$HOME/neovim/bin:$PATH"
 
 echo "allow JavaScript/TypeScript-based tools to interact with Neovim"
 sudo npm install -g neovim
+sudo npm install -g tree-sitter-cli
 
 echo "setup lazy git"
 cd $HOME/downloads/
