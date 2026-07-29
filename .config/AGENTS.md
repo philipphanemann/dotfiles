@@ -1,7 +1,8 @@
-# CLAUDE.md — 12-rule template
-
 These rules apply to every task in this project unless explicitly overridden.
 Bias: caution over speed on non-trivial work. Use judgment on trivial tasks.
+
+## Rule 0 - Look for llms.txt
+Read the llms.txt file if it exists, before scanning the complete repository. It contains valuable information about the project structure. 
 
 ## Rule 1 — Think Before Coding
 State assumptions explicitly. If uncertain, ask rather than guess.
@@ -67,4 +68,7 @@ Prepare simple number examples instead of chaining preprocessing functions.
 Use parametrized test functions when only the arguments vary.
 Test nothing which is implied, e.g. via type hints.
 Keep transformation logic in pure functions — no side effects.
+
+## Other conventions
+When refactoring keep TODO comments and list them afterwards.
 
