@@ -34,6 +34,7 @@ brew install basedpyright
 brew install yaml-language-server
 brew install jsonlint
 brew install lua-language-server
+brew install anomalyco/tap/opencode
 
 
 
