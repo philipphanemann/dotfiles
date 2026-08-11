@@ -17,7 +17,6 @@ icons = {
     spell = " ",
     debug = "  ",
     clock = " ",
-    mcphub = " ",
   },
   dap = {
     Stopped             = { " ", "DiagnosticWarn", "DapStoppedLine" },
@@ -128,4 +127,3 @@ icons = {
 }
 
 return icons
-
