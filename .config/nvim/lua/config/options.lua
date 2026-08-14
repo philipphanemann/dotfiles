@@ -100,7 +100,32 @@ vim.opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "
 -- }
 
 vim.opt.clipboard = "unnamedplus"
-if vim.env.SSH_TTY then
+if vim.fn.has("wsl") == 1 then
+    vim.g.clipboard = {
+        name = "WslClipboard",
+        copy = {
+            ["+"] = { "clip.exe" },
+            ["*"] = { "clip.exe" },
+        },
+        paste = {
+            ["+"] = {
+                "powershell.exe",
+                "-NoLogo",
+                "-NoProfile",
+                "-Command",
+                '[Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+            },
+            ["*"] = {
+                "powershell.exe",
+                "-NoLogo",
+                "-NoProfile",
+                "-Command",
+                '[Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+            },
+        },
+        cache_enabled = 0,
+    }
+elseif vim.env.SSH_TTY then
     local function paste()
         return {
             vim.fn.split(vim.fn.getreg(""), "\n"),
