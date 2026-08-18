@@ -34,6 +34,7 @@ brew install basedpyright
 brew install yaml-language-server
 brew install jsonlint
 brew install lua-language-server
+brew install zellij
 brew install anomalyco/tap/opencode
 brew install --cask git-credential-manager
 
@@ -113,6 +114,5 @@ export COLORTERM=truecolor # in bashrc
 # - marp presentations
 #
 # symlink config files
-ln -s $script_dir/.config/.tmux.conf $HOME/.tmux.conf
 ln -s $script_dir/.config/.init_functions.sh $HOME/.init_functions.sh
 
