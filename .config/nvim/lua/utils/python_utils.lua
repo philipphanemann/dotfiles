@@ -31,4 +31,18 @@ function M.yank_file_path_to_clipboard()
 	print("Yanked file path to clipboard: " .. file_path)
 end
 
+function M.yank_file_path_relative_to_git_root()
+	local file_path = vim.fn.expand("%:p")
+	local git_root = Snacks.git.get_root(file_path)
+
+	if not git_root then
+		vim.notify("Current file is not inside a Git repository", vim.log.levels.ERROR)
+		return
+	end
+
+	local relative_path = vim.fs.relpath(git_root, file_path)
+	vim.fn.setreg("+", relative_path)
+	print("Yanked relative file path to clipboard: " .. relative_path)
+end
+
 return M

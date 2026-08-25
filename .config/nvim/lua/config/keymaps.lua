@@ -338,7 +338,8 @@ map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 --
 -- python
-map("n", "<leader>yp", function() require("utils.python_utils").yank_file_path_to_clipboard() end, { desc = "yank filepath to clipboard" })
+map("n", "<leader>ypf", function() require("utils.python_utils").yank_file_path_to_clipboard() end, { desc = "yank full filepath to clipboard" })
+map("n", "<leader>ypr", function() require("utils.python_utils").yank_file_path_relative_to_git_root() end, { desc = "yank filepath relative to git root" })
 map("n", "<leader>yI", function() 
   require("utils.python_utils").PythonFileImportStatement(vim.fn.expand("<cword>")) 
 end, { desc = "yank import of variable under cursor" })
