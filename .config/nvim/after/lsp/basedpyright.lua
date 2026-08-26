@@ -3,6 +3,7 @@ return {
         basedpyright = {
             analysis = {
                 typeCheckingMode = "basic", -- possible values: "off", "basic", "strict"
+                diagnosticMode = "openFilesOnly",
                 -- diagnosticSeverityOverrides = {
                 --   reportUnknownParameterType = "none",
                 --   reportMissingParameterType = "none",

@@ -11,11 +11,11 @@ local source_priority = {
 return {
     {
         "zbirenbaum/copilot.lua",
+        -- Load Copilot only when explicitly requested with :Copilot.
         cmd = "Copilot",
-        event = "InsertEnter",
         opts = {
             suggestion = { enabled = true, debounce = 200 },
-            panel = { enabled = true },
+            panel = { enabled = false },
         },
     },
     {
@@ -108,7 +108,7 @@ return {
             },
 
             sources = {
-                default = { "git", "lsp", "path", "snippets", "buffer", "lazydev", "copilot" },
+                default = { "git", "lsp", "path", "snippets", "buffer", "lazydev" },
                 providers = {
                     lazydev = {
                         module = "lazydev.integrations.blink",
