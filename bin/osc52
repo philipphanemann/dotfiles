@@ -1,0 +1,9 @@
+#!/bin/sh
+# Copy stdin to the terminal clipboard via OSC 52.
+
+{
+  printf '\033]52;c;'
+  base64 | tr -d '\n'
+  printf '\a'
+} > /dev/tty
+
