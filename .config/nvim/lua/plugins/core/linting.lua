@@ -6,7 +6,7 @@ return {
       local lint = require("lint")
 
       -- No global linters_by_ft; languages configure themselves via opts
-      lint.linters_by_ft = lint.linters_by_ft or {}
+      lint.linters_by_ft = {}
 
       -- TODO: add this to readme
       -- To add language specific linters in their own config file, use this snippet:

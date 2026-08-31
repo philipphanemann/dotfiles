@@ -25,6 +25,7 @@ map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+map("n", "<leader>bf", "1<C-g>", { desc = "Show Full File Path" })
 map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>bd", function()
 	Snacks.bufdelete()
@@ -340,6 +341,22 @@ map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 -- python
 map("n", "<leader>ypf", function() require("utils.python_utils").yank_file_path_to_clipboard() end, { desc = "yank full filepath to clipboard" })
 map("n", "<leader>ypr", function() require("utils.python_utils").yank_file_path_relative_to_git_root() end, { desc = "yank filepath relative to git root" })
+map("n", "<leader>yb", function()
+  local git_root = Snacks.git.get_root()
+  if not git_root then
+    vim.notify("Current directory is not inside a Git repository", vim.log.levels.ERROR)
+    return
+  end
+
+  local branch = vim.fn.systemlist({ "git", "-C", git_root, "branch", "--show-current" })[1]
+  if vim.v.shell_error ~= 0 or not branch or branch == "" then
+    vim.notify("Git branch is unavailable (detached HEAD?)", vim.log.levels.ERROR)
+    return
+  end
+
+  vim.fn.setreg("+", branch)
+  vim.notify("Yanked Git branch: " .. branch)
+end, { desc = "yank current Git branch to clipboard" })
 map("n", "<leader>yI", function() 
   require("utils.python_utils").PythonFileImportStatement(vim.fn.expand("<cword>")) 
 end, { desc = "yank import of variable under cursor" })
