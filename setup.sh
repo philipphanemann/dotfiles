@@ -1,5 +1,7 @@
 # setting up things on an ubuntu machine
 
+script_dir="$(cd -- "$(dirname -- "$0")" && pwd)"
+
 echo "apt update"
 sudo apt update
 
@@ -10,12 +12,11 @@ if [ ! -d "$HOME/.pyenv" ]; then
 	echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 	echo 'eval "$(pyenv init - bash)"' >> ~/.bashrc
 	echo "install python build dependencies"
-	exec "$SHELL"
   # Your install script or commands go here
 else
   echo "Skipping install: $HOME/.pyenv already exists."
 fi
-sudo apt update; sudo apt install -y build-essential libssl-dev zlib1g-dev \
+sudo apt install -y build-essential libssl-dev zlib1g-dev \
 libbz2-dev libreadline-dev libsqlite3-dev curl git \
 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
@@ -37,6 +38,7 @@ brew install lua-language-server
 brew install zellij
 brew install anomalyco/tap/opencode
 brew install --cask git-credential-manager
+brew install tree-sitter-cli
 
 
 
@@ -66,7 +68,7 @@ if [ ! -d "$HOME/dev" ]; then
   mkdir $HOME/dev/
 fi
 
-mkdir $HOME/downloads/
+mkdir -p $HOME/downloads/
 
 echo "install neovim"
 git clone https://github.com/neovim/neovim.git $HOME/dev/neovim
@@ -83,7 +85,6 @@ export PATH="$HOME/neovim/bin:$PATH"
 
 echo "allow JavaScript/TypeScript-based tools to interact with Neovim"
 sudo npm install -g neovim
-sudo npm install -g tree-sitter-cli
 
 echo "setup lazy git"
 cd $HOME/downloads/
@@ -114,5 +115,5 @@ export COLORTERM=truecolor # in bashrc
 # - marp presentations
 #
 # symlink config files
-ln -s $script_dir/.config/.init_functions.sh $HOME/.init_functions.sh
+ln -s "$script_dir/.config/.init_functions.sh $HOME/.init_functions.sh"
 
