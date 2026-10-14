@@ -4,7 +4,10 @@ alias vim='nvim'
 
 # ranger
 alias ranger='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
-alias zps='zellij --layout pane_split'
+alias zjs='zellij --layout pane_split'
+alias zl='zellij list-sessions'
+alias za='zellij attach'
+alias zk='zellij kill-session'
 
 
 alias activate_poetry='eval $(poetry env activate)'
