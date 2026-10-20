@@ -43,6 +43,48 @@ return {
 					vim.b[bufnr].resolve_prev_diags_enabled = vim.diagnostic.is_enabled({ bufnr = bufnr })
 				end
 				vim.diagnostic.enable(false, { bufnr = bufnr })
+				vim.keymap.set("n", "<leader>gco", "<Plug>(resolve-ours)", {
+					buffer = bufnr,
+					desc = "Choose HEAD",
+					remap = true,
+					silent = true,
+				})
+				vim.keymap.set("n", "<leader>gct", "<Plug>(resolve-theirs)", {
+					buffer = bufnr,
+					desc = "Choose main",
+					remap = true,
+					silent = true,
+				})
+				vim.keymap.set("n", "<leader>gcdo", "<Plug>(resolve-diff-ours)", {
+					buffer = bufnr,
+					desc = "Diff base → HEAD",
+					remap = true,
+					silent = true,
+				})
+				vim.keymap.set("n", "<leader>gcdt", "<Plug>(resolve-diff-theirs)", {
+					buffer = bufnr,
+					desc = "Diff base → main",
+					remap = true,
+					silent = true,
+				})
+				vim.keymap.set("n", "<leader>gcdb", "<Plug>(resolve-diff-both)", {
+					buffer = bufnr,
+					desc = "Diff base → HEAD and main",
+					remap = true,
+					silent = true,
+				})
+				vim.keymap.set("n", "<leader>gcdv", "<Plug>(resolve-diff-vs)", {
+					buffer = bufnr,
+					desc = "Diff HEAD → main",
+					remap = true,
+					silent = true,
+				})
+				vim.keymap.set("n", "<leader>gcdV", "<Plug>(resolve-diff-vs-reverse)", {
+					buffer = bufnr,
+					desc = "Diff main → HEAD",
+					remap = true,
+					silent = true,
+				})
 			end,
 			on_conflicts_resolved = function(ctx)
 				local bufnr = ctx.bufnr
