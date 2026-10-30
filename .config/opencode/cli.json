@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "tabs": {
+    "mode": "on"
+  },
+  "keybinds": {
+    "agent.cycle": "tab",
+    "leader": "ctrl+x",
+    "variant.list": "<leader>v",
+    "variant.cycle": "shift+tab"
+  }
+}
